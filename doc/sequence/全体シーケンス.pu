@@ -1,0 +1,16 @@
+```@startuml 全体シーケンス
+actor お客様 as customer
+boundary 店舗 as store
+boundary お客様スマホ as cphone
+actor 従業員 as employee
+boundary 店舗端末 as terminal
+boundary プリンター as printer
+control 注文システム as ordersystem
+== 全体シーケンス ==
+ref over customer,printer : 来店から着席及びQRコード印字
+ref over customer,cphone : お客様注文
+ref over employee,ordersystem : 注文状況表示
+ref over employee,ordersystem : 注文を完了する
+ref over customer,cphone : 注文キャンセル
+@enduml
+```
