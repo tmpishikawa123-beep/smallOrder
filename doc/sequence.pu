@@ -1,0 +1,167 @@
+@startuml 全体シーケンス
+actor お客様 as customer
+boundary 店舗 as store
+boundary お客様スマホ as cphone
+actor 従業員 as employee
+boundary 店舗端末 as terminal
+boundary プリンター as printer
+control 注文システム as ordersystem
+== 全体シーケンス ==
+ref over customer,printer : 来店から着席及びQRコード印字
+ref over customer,cphone : お客様注文
+ref over employee,ordersystem : 注文状況表示
+ref over employee,ordersystem : 注文を完了する
+ref over customer,cphone : 注文キャンセル
+@enduml
+
+@startuml 来店から着席及びQRコード印字
+
+' participant Participant as Foo
+' actor       Actor       as Foo1
+' boundary    Boundary    as Foo2
+' control     Control     as Foo3
+' entity      Entity      as Foo4
+' database    Database    as Foo5
+' collections Collections as Foo6
+' queue       Queue       as Foo7
+
+== お客様用QRコード印字 ==
+
+actor お客様 as customer
+boundary 店舗 as store
+boundary お客様スマホ as cphone
+actor 従業員 as employee
+boundary 店舗端末 as terminal
+boundary プリンター as printer
+control 注文システム as ordersystem
+
+customer -> employee++ : 来店
+employee -> customer++ : 席案内
+employee -> terminal++ : 席入力
+terminal -> ordersystem++ : 着席情報送信 POST
+ref over ordersystem : 着席処理
+alt 着席処理成功
+    ordersystem -> terminal-- : 着席情報 200 OK
+    else 着席処理失敗
+    ref over employee,ordersystem : 共通エラー処理
+end
+terminal -> printer--++ : QRコード印字
+printer -> employee++-- : QRコード受け取り
+customer -> store-- : 着席
+employee -> customer-- : QRコードを渡す
+
+
+@enduml
+
+@startuml お客様注文
+
+actor お客様 as customer
+boundary 店舗 as store
+boundary お客様スマホ as cphone
+actor 従業員 as employee
+boundary 店舗端末 as terminal
+boundary プリンター as printer
+control 注文システム as ordersystem
+
+
+== お客様注文 ==
+customer -> cphone++ : QRコード読み取り
+cphone -> ordersystem++ : 初期ページ表示要求 GET
+alt 初期ページ取得成功
+    ordersystem -> cphone-- : 初期ページ 200 OK
+    else 初期ページ取得失敗
+    ref over employee,ordersystem : 共通エラー処理
+end
+cphone --> customer-- : 初期ページ表示
+customer -> cphone++ : 注文内容入力
+cphone -> ordersystem++ : 注文内容送信 POST
+ordersystem -> cphone-- : 注文完了 200 OK
+cphone --> customer-- : 注文完了ページ表示
+
+@enduml
+
+@startuml 注文状況表示
+
+actor 従業員 as employee
+boundary 店舗端末 as terminal
+boundary プリンター as printer
+control 注文システム as ordersystem
+
+
+== 注文状況確認 ==
+loop 注文状況更新
+    terminal -> ordersystem++ : 10秒ごとに注文状況要求 GET
+    alt 注文状況取得成功
+    ordersystem -> terminal--++ : 注文状況 200 OK
+    else 注文状況取得失敗
+    ref over employee,ordersystem : 共通エラー処理
+end
+    terminal --> employee : 注文状況表示
+    terminal -> printer++-- : 新規注文があれば印刷
+    printer -> employee-- : 注文内容受け取り
+end
+
+@enduml
+
+@startuml 注文を完了する
+
+actor お客様 as customer
+actor 従業員 as employee
+boundary 店舗端末 as terminal
+boundary プリンター as printer
+control 注文システム as ordersystem
+
+
+== 注文完了 ==
+ref over employee,terminal : 注文状況確認
+employee -> employee : 調理完了
+employee -> customer : 提供
+employee -> terminal++ : 注文完了操作
+ terminal -> ordersystem++ : 注文完了 PUT
+ ref over ordersystem : 注文完了処理
+alt 注文完了成功
+    ordersystem -> terminal-- : 注文完了 200 OK
+    else 注文完了失敗
+    ref over employee,ordersystem : 共通エラー処理
+end
+terminal --> employee-- : 注文状況表示
+
+@enduml
+
+@startuml 注文キャンセル
+
+actor お客様 as customer
+boundary お客様スマホ as cphone
+actor 従業員 as employee
+boundary 店舗端末 as terminal
+boundary プリンター as printer
+control 注文システム as ordersystem
+
+
+== 注文キャンセル ==
+customer -> cphone : 注文キャンセル要求
+cphone -> ordersystem++ : 注文キャンセル PUT
+ref over ordersystem : 注文キャンセル処理
+alt 注文キャンセル成功
+    ordersystem -> cphone-- : 注文キャンセル 200 OK
+    else 注文キャンセル失敗
+    ref over employee,ordersystem : 共通エラー処理
+end
+cphone --> customer-- : 注文キャンセル結果表示
+
+@enduml
+
+@startuml 共通エラー処理
+== 共通エラー処理 ==
+actor 従業員 as employee
+boundary 店舗端末 as terminal
+control 注文システム as ordersystem
+
+terminal -> ordersystem++ : GET/PUT/POST 要求
+ordersystem -> ordersystem : エラー発生
+ordersystem -> terminal-- : 500 Internal Server Error
+
+
+
+
+@enduml
