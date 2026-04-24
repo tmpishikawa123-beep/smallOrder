@@ -1,4 +1,5 @@
-```@startuml 全体シーケンス
+```puml
+@startuml 全体シーケンス
 actor お客様 as customer
 boundary 店舗 as store
 boundary お客様スマホ as cphone
@@ -15,7 +16,8 @@ ref over customer,cphone : 注文キャンセル
 @enduml
 ```
 
-```@startuml 来店から着席及びQRコード印字
+```puml
+@startuml 来店から着席及びQRコード印字
 
 ' participant Participant as Foo
 ' actor       Actor       as Foo1
@@ -54,7 +56,8 @@ employee -> customer-- : QRコードを渡す
 
 @enduml
 ```
-```@startuml お客様注文
+```puml
+@startuml お客様注文
 
 actor お客様 as customer
 boundary 店舗 as store
@@ -82,7 +85,8 @@ cphone --> customer-- : 注文完了ページ表示
 @enduml
 ```
 
-```@startuml 注文状況表示
+```puml
+@startuml 注文状況表示
 
 actor 従業員 as employee
 boundary 店舗端末 as terminal
@@ -105,7 +109,8 @@ end
 
 @enduml
 ```
-```@startuml 注文を完了する
+```puml
+@startuml 注文を完了する
 
 actor お客様 as customer
 actor 従業員 as employee
@@ -130,7 +135,8 @@ terminal --> employee-- : 注文状況表示
 
 @enduml
 ```
-```@startuml 注文キャンセル
+```puml
+@startuml 注文キャンセル
 
 actor お客様 as customer
 boundary お客様スマホ as cphone
@@ -153,7 +159,8 @@ cphone --> customer-- : 注文キャンセル結果表示
 
 @enduml
 ```
-```@startuml 共通エラー処理
+```puml
+@startuml 共通エラー処理
 == 共通エラー処理 ==
 actor 従業員 as employee
 boundary 店舗端末 as terminal
