@@ -1,3 +1,4 @@
+```
 @startuml 全体シーケンス
 actor お客様 as customer
 boundary 店舗 as store
@@ -165,3 +166,4 @@ ordersystem -> terminal-- : 500 Internal Server Error
 
 
 @enduml
+```
