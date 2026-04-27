@@ -1,4 +1,4 @@
-```puml
+
 @startuml 全体シーケンス
 actor お客様 as customer
 boundary 店舗 as store
@@ -14,19 +14,8 @@ ref over employee,ordersystem : 注文状況表示
 ref over employee,ordersystem : 注文を完了する
 ref over customer,cphone : 注文キャンセル
 @enduml
-```
 
-```puml
 @startuml 来店から着席及びQRコード印字
-
-' participant Participant as Foo
-' actor       Actor       as Foo1
-' boundary    Boundary    as Foo2
-' control     Control     as Foo3
-' entity      Entity      as Foo4
-' database    Database    as Foo5
-' collections Collections as Foo6
-' queue       Queue       as Foo7
 
 == お客様用QRコード印字 ==
 
@@ -44,7 +33,7 @@ employee -> terminal++ : 席入力
 terminal -> ordersystem++ : 着席情報送信 POST
 ref over ordersystem : 着席処理
 alt 着席処理成功
-    ordersystem -> terminal-- : 着席情報 200 OK
+    ordersystem -> terminal-- : 着席完了レスポンス 200 OK
     else 着席処理失敗
     ref over employee,ordersystem : 共通エラー処理
 end
@@ -53,10 +42,8 @@ printer -> employee++-- : QRコード受け取り
 customer -> store-- : 着席
 employee -> customer-- : QRコードを渡す
 
-
 @enduml
-```
-```puml
+
 @startuml お客様注文
 
 actor お客様 as customer
@@ -83,9 +70,9 @@ ordersystem -> cphone-- : 注文完了 200 OK
 cphone --> customer-- : 注文完了ページ表示
 
 @enduml
-```
 
-```puml
+
+
 @startuml 注文状況表示
 
 actor 従業員 as employee
@@ -108,8 +95,8 @@ end
 end
 
 @enduml
-```
-```puml
+
+
 @startuml 注文を完了する
 
 actor お客様 as customer
@@ -134,8 +121,8 @@ end
 terminal --> employee-- : 注文状況表示
 
 @enduml
-```
-```puml
+
+
 @startuml 注文キャンセル
 
 actor お客様 as customer
@@ -158,8 +145,8 @@ end
 cphone --> customer-- : 注文キャンセル結果表示
 
 @enduml
-```
-```puml
+
+
 @startuml 共通エラー処理
 == 共通エラー処理 ==
 actor 従業員 as employee
@@ -174,4 +161,4 @@ ordersystem -> terminal-- : 500 Internal Server Error
 
 
 @enduml
-```
+
